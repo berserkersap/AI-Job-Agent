@@ -1,0 +1,10 @@
+# requirements.txt
+langchain-google-genai
+python-dotenv
+beautifulsoup4
+requests
+PyPDF2
+python-docx
+scikit-learn
+selenium
+webdriver-manager
