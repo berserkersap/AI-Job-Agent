@@ -1,6 +1,6 @@
 # main.py
 import os
-from modules import input_handler, analysis_engine, job_searcher, application_automator, user_interface
+from modules import input_handler, analysis_engine, job_searcher, application_automator, user_interface, rag_engine
 
 def main_workflow():
     # 1. Get User Input
@@ -35,19 +35,35 @@ def main_workflow():
     selected_jobs = user_interface.get_user_selections(analyzed_jobs)
     
     if not selected_jobs:
-        print("No jobs selected for application. Exiting.")
+        print("No jobs selected. Exiting.")
         return
 
+    # 6. ✨ NEW RAG IMPLEMENTATION ✨
+    # Build a single RAG chain based on the user's selected jobs
+    selected_jds = [job['description'] for job in selected_jobs]
+    rag_chain = rag_engine.create_rag_chain(resume_text, selected_jds)
+
+
     # 6. Process Applications for Selected Jobs
+
     print("\n--- 🚀 Preparing to Apply ---")
     for job in selected_jobs:
         print(f"\nProcessing application for: {job['title']} at {job['company']}")
         
-        # Suggest resume tailoring
-        suggestions = analysis_engine.generate_resume_suggestions(resume_text, job.get('description', ''))
-        print("\n--- AI Resume Suggestions ---")
+        # Get hyper-personalized suggestions from the RAG chain
+        print("\n--- AI RAG-Powered Resume Suggestions ---")
+        suggestions = rag_engine.query_rag_chain(rag_chain, job['title'])
         print(suggestions)
-        print("--------------------------")
+        print("---------------------------------------")
+    
+    # for job in selected_jobs:
+    #     print(f"\nProcessing application for: {job['title']} at {job['company']}")
+        
+    #     # Suggest resume tailoring
+    #     suggestions = analysis_engine.generate_resume_suggestions(resume_text, job.get('description', ''))
+    #     print("\n--- AI Resume Suggestions ---")
+    #     print(suggestions)
+    #     print("--------------------------")
         
         use_default = input("Use the default resume for this application? (y/n): ").lower()
         current_resume_path = default_resume_path
@@ -67,6 +83,7 @@ def main_workflow():
     skills_to_learn = analysis_engine.suggest_skills_to_learn(resume_text, desired_job)
     print(skills_to_learn)
     print("\nAll tasks completed. Good luck with your job hunt! 💪")
+
 
 if __name__ == "__main__":
     main_workflow()
