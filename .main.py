@@ -1,4 +1,5 @@
 # main.py
+# Prelimiary main function 
 import os
 from modules import input_handler, analysis_engine, job_searcher, application_automator, user_interface, rag_engine
 
@@ -85,5 +86,5 @@ def main_workflow():
     print("\nAll tasks completed. Good luck with your job hunt! 💪")
 
 
-if __name__ == "__main__":
-    main_workflow()
+# if __name__ == "__main__":
+#     main_workflow()
